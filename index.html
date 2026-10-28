@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Absensi Siswa SMKN 1 GS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<style>
+:root{--g1:#031c11;--g2:#0c5a3a;--g3:#2fa56f;--gold:#e8cf8f;--glass:rgba(255,255,255,.09);--line:rgba(255,255,255,.18)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:'Poppins','Segoe UI',sans-serif;color:#f1fff7;
+ background:radial-gradient(900px 500px at 85% -10%,rgba(232,207,143,.18),transparent 60%),
+ radial-gradient(700px 500px at -10% 100%,rgba(47,165,111,.35),transparent 60%),
+ linear-gradient(135deg,var(--g1),var(--g2) 60%,#1a8a5a);background-attachment:fixed}
+h1,h2,h3{font-family:'Playfair Display',Georgia,serif;margin:0}
+button,select,input{font:inherit;border:0;border-radius:12px;padding:10px 14px;outline:none}
+select,input{background:rgba(255,255,255,.95);color:#06402a}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:22px;
+ backdrop-filter:blur(14px);box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.hide{display:none!important}
+.btn{background:linear-gradient(135deg,#f3dfa2,#d9b968);color:#073b25;font-weight:600;cursor:pointer;transition:.2s}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.05)}
+
+#login{max-width:380px;margin:14vh auto 0;text-align:center}
+#login .logo{font-size:44px}
+#login input{width:100%;margin:18px 0 12px;text-align:center}
+#login p{opacity:.75;margin:6px 0 0;font-size:14px}
+
+#app{display:flex;min-height:100vh}
+aside{width:230px;padding:22px 14px;display:flex;flex-direction:column;gap:8px;
+ background:rgba(2,24,14,.45);border-right:1px solid var(--line);backdrop-filter:blur(14px);position:sticky;top:0;height:100vh}
+aside .brand{padding:6px 10px 18px;border-bottom:1px solid var(--line);margin-bottom:10px}
+aside .brand h2{font-size:19px;color:var(--gold)}
+aside .brand small{opacity:.7}
+.nav{display:flex;align-items:center;gap:12px;background:transparent;color:#e6fff1;text-align:left;cursor:pointer;transition:.2s;width:100%}
+.nav:hover{background:rgba(255,255,255,.1)}
+.nav.on{background:linear-gradient(135deg,rgba(243,223,162,.95),rgba(217,185,104,.95));color:#073b25;font-weight:600}
+.nav span{font-size:20px}
+main{flex:1;padding:26px;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.top h2{font-size:28px}
+.top small{opacity:.75}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+
+#reader{max-width:400px;margin:auto;border-radius:16px;overflow:hidden;background:#fff;border:3px solid var(--gold)}
+#hasil{text-align:center;margin-top:18px;font-size:18px;font-weight:500;min-height:30px;padding:12px;border-radius:14px}
+#hasil.ok{background:rgba(74,222,128,.2)}#hasil.no{background:rgba(251,191,36,.2)}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:18px}
+.stat{padding:14px 16px;border-radius:16px;background:var(--glass);border:1px solid var(--line)}
+.stat b{display:block;font-size:26px;font-family:'Playfair Display',serif}
+.stat i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.split{display:grid;grid-template-columns:300px 1fr;gap:18px;align-items:start}
+.donut{text-align:center}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin-top:12px;font-size:13px}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{background:rgba(0,0,0,.25);color:var(--gold);font-weight:500;position:sticky;top:0}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+tr:hover td{background:rgba(255,255,255,.05)}
+.badge{padding:3px 10px;border-radius:20px;font-size:12px;color:#06301e;font-weight:600}
+td select,td input{padding:6px 10px;font-size:13px;border-radius:8px}
+.empty{padding:30px;text-align:center;opacity:.8}
+.form{max-width:440px;margin:auto;display:grid;gap:12px}.form input{width:100%}
+#qrOut{text-align:center;margin-top:20px}#qrOut canvas{max-width:260px;width:100%;border-radius:12px}#dMsg{text-align:center;margin-top:6px;min-height:22px}
+@media(max-width:760px){
+ aside{width:68px;padding:14px 8px}.brand,.nav b{display:none}.nav{justify-content:center;padding:12px 6px}
+ main{padding:16px}.split{grid-template-columns:1fr}.top h2{font-size:22px}}
+</style>
+</head>
+<body>
+
+<div id="login" class="card">
+  <div class="logo">🎓</div>
+  <h1>Absensi Siswa</h1>
+  <p>SMKN 1 GS</p>
+  <input id="pw" type="password" placeholder="Masukkan sandi" autocomplete="off">
+  <button class="btn" style="width:100%" onclick="masuk()">Masuk</button>
+  <div id="lerr" style="margin-top:12px;min-height:20px"></div>
+</div>
+
+<div id="app" class="hide">
+  <aside>
+    <div class="brand"><h2>SMKN 1 GS</h2><small>Absensi Siswa</small></div>
+    <button class="nav on" data-t="scan"><span>📷</span><b>Scanner</b></button>
+    <button class="nav" data-t="buat"><span>🪪</span><b>Buat QR</b></button>
+    <button class="nav" data-t="guru"><span>👩‍🏫</span><b>Guru</b></button>
+    <button class="nav" data-t="admin"><span>📊</span><b>Admin</b></button>
+  </aside>
+  <main>
+    <section id="scan">
+      <div class="top"><div><h2>Scan QR Code</h2><small>Arahkan kartu siswa ke kamera</small></div></div>
+      <div class="card"><div id="reader"></div><div id="hasil"></div></div>
+    </section>
+
+    <section id="buat" class="hide">
+      <div class="top"><div><h2>Buat QR Code Siswa</h2><small>Siswa baru otomatis terdaftar · siswa lama cukup buat ulang QR</small></div></div>
+      <div class="card">
+        <div class="form">
+          <input id="dN" placeholder="NIS" autocomplete="off">
+          <input id="dNm" placeholder="Nama lengkap" autocomplete="off">
+          <input id="dK" list="dl" placeholder="Kelas (contoh: X TJKT 1)" autocomplete="off">
+          <datalist id="dl"></datalist>
+          <button class="btn" onclick="daftar()">Buat QR Code</button>
+        </div>
+        <div id="dMsg"></div>
+        <div id="qrOut"></div>
+      </div>
+    </section>
+
+    <section id="guru" class="hide">
+      <div class="top"><div><h2>Monitoring Siswa</h2><small id="gInfo"></small></div></div>
+      <div class="bar">
+        <select id="gF"></select>
+        <input type="date" id="gT">
+        <input id="gQ" placeholder="🔍 Cari nama / NIS">
+      </div>
+      <div id="gStat" class="stats"></div>
+      <div class="card tbl"><table id="gTbl"></table></div>
+    </section>
+
+    <section id="admin" class="hide">
+      <div class="top"><div><h2>Rekap Presensi</h2><small id="aInfo"></small></div></div>
+      <div class="bar">
+        <select id="aP"><option value="harian">Harian</option><option value="mingguan">Mingguan</option><option value="bulanan">Bulanan</option></select>
+        <select id="aF"></select>
+        <input type="date" id="aT">
+      </div>
+      <div id="aStat" class="stats"></div>
+      <div class="split">
+        <div class="card donut"><h3 style="font-size:18px;margin-bottom:10px">Diagram Kehadiran</h3><div id="aChart"></div><div id="aLeg" class="legend"></div></div>
+        <div class="card tbl"><table id="aTbl"></table></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+// GANTI dengan URL Web App Apps Script kamu
+const API = 'https://script.google.com/macros/s/AKfycbyFnL4c1LZyw99GkameVRTlB63DUh_1pazjA-jC5QOnYjKWd3K_ti7xCyzaW1B9eHWy/exec';
+const WARNA = {Masuk:'#4ade80',Terlambat:'#fbbf24',Sakit:'#60a5fa',Izin:'#c084fc',Alfa:'#f87171','Belum absen':'#94a3b8'};
+const STATUS = ['Masuk','Terlambat','Sakit','Izin','Alfa'];
+const tokens = {}; let qr = null, sibuk = false, kelasOpsi = '';
+const $ = id => document.getElementById(id);
+const hariIni = () => new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'});
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const badge = s => `<span class="badge" style="background:${WARNA[s]||'#ccc'}">${esc(s)}</span>`;
+
+async function api(data){
+  const r = await (await fetch(API,{method:'POST',body:JSON.stringify(data)})).json();
+  if (r.err) throw new Error(r.msg);
+  return r;
+}
+async function login(role, pass){
+  const r = await api({a:'login',role,pass});
+  if (r.ok) tokens[role] = r.token;
+  return r;
+}
+async function masuk(){
+  $('lerr').textContent = 'Memeriksa...';
+  try{
+    const r = await login('petugas', $('pw').value);
+    if (!r.ok) return $('lerr').textContent = r.msg;
+  }catch(e){ return $('lerr').textContent = 'Gagal terhubung: ' + e.message; }
+  $('login').classList.add('hide'); $('app').classList.remove('hide');
+  $('gT').value = $('aT').value = hariIni();
+  mulaiScan();
+}
+$('pw').addEventListener('keydown', e => e.key === 'Enter' && masuk());
+
+document.querySelectorAll('.nav').forEach(b => b.onclick = () => {
+  const t = b.dataset.t; (t === 'scan' || t === 'buat') ? tab(t) : akses(t);
+});
+function tab(n){
+  ['scan','buat','guru','admin'].forEach(x => $(x).classList.toggle('hide', x !== n));
+  document.querySelectorAll('.nav').forEach(b => b.classList.toggle('on', b.dataset.t === n));
+  if (n === 'buat') muatDatalist();
+  if (n === 'scan') mulaiScan(); else if (qr){ qr.stop().catch(()=>{}); qr = null; }
+}
+async function akses(role){
+  if (!tokens[role]){
+    const p = prompt('Sandi ' + role + ':'); if (!p) return;
+    try{ const r = await login(role,p); if (!r.ok) return alert(r.msg); }
+    catch(e){ return alert('Gagal: ' + e.message); }
+  }
+  tab(role);
+  try{
+    if (!kelasOpsi){
+      const k = await api({a:'kelas',t:tokens[role]});
+      kelasOpsi = '<option value="ALL">Semua Siswa</option><option value="X">Kelas X</option><option value="XI">Kelas XI</option><option value="XII">Kelas XII</option>'
+        + k.kelas.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+      $('gF').innerHTML = $('aF').innerHTML = kelasOpsi;
+    }
+    role === 'guru' ? muatGuru() : muatAdmin();
+  }catch(e){ alert('Gagal memuat data: ' + e.message); }
+}
+
+function mulaiScan(){
+  if (qr) return;
+  qr = new Html5Qrcode('reader');
+  qr.start({facingMode:'environment'},{fps:10,qrbox:240}, async txt => {
+    if (sibuk) return; sibuk = true;
+    $('hasil').className = ''; $('hasil').textContent = 'Memproses...';
+    try{
+      const r = await api({a:'scan',t:tokens.petugas,nis:txt});
+      $('hasil').className = r.ok ? 'ok' : 'no';
+      $('hasil').textContent = (r.ok ? '✅ ' : '⚠️ ') + r.msg;
+    }catch(e){ $('hasil').className = 'no'; $('hasil').textContent = '⚠️ ' + e.message; }
+    setTimeout(() => sibuk = false, 2500);
+  }).catch(e => { $('hasil').textContent = 'Kamera tidak dapat dibuka: ' + e; qr = null; });
+}
+
+/* ---------- BUAT QR ---------- */
+async function muatDatalist(){
+  if ($('dl').children.length) return;
+  try{
+    const k = await api({a:'kelas',t:tokens.petugas});
+    $('dl').innerHTML = k.kelas.map(c => `<option value="${esc(c)}">`).join('');
+  }catch(e){}
+}
+async function daftar(){
+  const nis = $('dN').value.trim(), nama = $('dNm').value.trim(), kelas = $('dK').value.trim();
+  $('qrOut').innerHTML = ''; $('dMsg').textContent = 'Memproses...';
+  try{
+    const r = await api({a:'daftar',t:tokens.petugas,nis,nama,kelas});
+    $('dMsg').textContent = (r.ok ? '✅ ' : '⚠️ ') + r.msg;
+    if (r.ok){ gambarQR(r.nis, nama); $('dl').innerHTML = ''; }
+  }catch(e){ $('dMsg').textContent = '⚠️ ' + e.message; }
+}
+function gambarQR(nis, nama){
+  const q = qrcode(0,'M'); q.addData(nis); q.make();
+  const n = q.getModuleCount(), px = 8, m = 4, W = (n + 2*m) * px, H = W + 64;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const g = cv.getContext('2d');
+  g.fillStyle = '#fff'; g.fillRect(0,0,W,H); g.fillStyle = '#000';
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r,c)) g.fillRect((c+m)*px,(r+m)*px,px,px);
+  g.fillStyle = '#073b25'; g.textAlign = 'center';
+  g.font = 'bold 22px sans-serif'; g.fillText(nama.length > 28 ? nama.slice(0,27) + '…' : nama, W/2, W + 8);
+  g.font = '18px sans-serif'; g.fillText('NIS ' + nis, W/2, W + 36);
+  const a = document.createElement('a');
+  a.href = cv.toDataURL('image/png'); a.download = 'QR-' + nis + '.png';
+  a.className = 'btn'; a.textContent = '⬇ Unduh QR Code'; a.style.cssText = 'display:inline-block;margin-top:14px;padding:10px 18px;border-radius:12px;text-decoration:none';
+  $('qrOut').append(cv, document.createElement('br'), a);
+}
+
+/* ---------- GURU ---------- */
+let dataGuru = [];
+async function muatGuru(){
+  $('gTbl').innerHTML = '<tr><td class="empty">Memuat data siswa...</td></tr>';
+  try{
+    const r = await api({a:'monitor',t:tokens.guru||tokens.admin,f:$('gF').value,tgl:$('gT').value});
+    dataGuru = r.data; tampilGuru();
+  }catch(e){ $('gTbl').innerHTML = `<tr><td class="empty">⚠️ ${esc(e.message)}</td></tr>`; }
+}
+function ringkasGuru(){
+  const c = {}; dataGuru.forEach(s => c[s.status] = (c[s.status]||0) + 1);
+  const plg = dataGuru.filter(s => s.pulang).length;
+  $('gInfo').textContent = dataGuru.length + ' siswa';
+  $('gStat').innerHTML = `<div class="stat"><b>${dataGuru.length}</b>Total</div>` +
+    [...STATUS,'Belum absen'].map(k => `<div class="stat"><b>${c[k]||0}</b><i style="background:${WARNA[k]}"></i>${k}</div>`).join('') +
+    `<div class="stat"><b>${plg}</b><i style="background:#2dd4bf"></i>Sudah pulang</div>`;
+}
+function tampilGuru(){
+  const q = $('gQ').value.toLowerCase();
+  const d = dataGuru.filter(s => !q || s.nama.toLowerCase().includes(q) || s.nis.includes(q));
+  ringkasGuru();
+  if (!d.length) return $('gTbl').innerHTML = '<tr><td class="empty">Tidak ada siswa. Pastikan sheet "Siswa" berisi data.</td></tr>';
+  $('gTbl').innerHTML = '<tr><th>No</th><th>NIS</th><th>Nama</th><th>Kelas</th><th>Masuk</th><th>Pulang</th><th>Status</th><th>Keterangan</th></tr>' +
+    d.map((s,i) => `<tr data-nis="${esc(s.nis)}"><td>${i+1}</td><td>${esc(s.nis)}</td><td>${esc(s.nama)}</td><td>${esc(s.kelas)}</td><td>${esc(s.jam)}</td>
+    <td><input type="time" class="plg" value="${esc(s.pulang)}"></td>
+    <td><select class="st">${['Belum absen',...STATUS].map(x => `<option ${x===s.status?'selected':''}>${x}</option>`).join('')}</select></td>
+    <td><input class="ket" value="${esc(s.ket)}" placeholder="alasan sakit / izin"></td></tr>`).join('');
+}
+$('gTbl').addEventListener('change', async e => {
+  const tr = e.target.closest('tr'); if (!tr || !tr.dataset.nis) return;
+  const s = dataGuru.find(x => x.nis === tr.dataset.nis), tk = tokens.guru || tokens.admin;
+  if (e.target.classList.contains('plg')){          // ubah waktu pulang
+    try{
+      const r = await api({a:'pulang',t:tk,nis:s.nis,pulang:e.target.value,tgl:$('gT').value});
+      if (!r.ok){ alert(r.msg); e.target.value = s.pulang || ''; return; }
+      s.pulang = r.pulang; ringkasGuru();
+    }catch(err){ alert('Gagal menyimpan: ' + err.message); e.target.value = s.pulang || ''; }
+    return;
+  }
+  const status = tr.querySelector('.st').value, ket = tr.querySelector('.ket').value;
+  if (status === 'Belum absen') return;
+  try{
+    const r = await api({a:'ubah',t:tk,nis:s.nis,status,ket,tgl:$('gT').value});
+    s.status = status; s.ket = ket;
+    if (r.jam){ s.jam = r.jam; tr.children[4].textContent = r.jam; }
+    ringkasGuru();
+  }catch(err){ alert('Gagal menyimpan: ' + err.message); }
+});
+$('gF').onchange = $('gT').onchange = muatGuru;
+$('gQ').oninput = tampilGuru;
+
+/* ---------- ADMIN ---------- */
+async function muatAdmin(){
+  $('aTbl').innerHTML = '<tr><td class="empty">Memuat rekap...</td></tr>';
+  try{
+    const r = await api({a:'rekap',t:tokens.admin,periode:$('aP').value,f:$('aF').value,tgl:$('aT').value});
+    $('aInfo').textContent = 'Periode ' + r.periode + ' · tersimpan di sheet "Rekap"';
+    const tot = {}; STATUS.forEach(k => tot[k] = r.rows.reduce((a,s) => a + s[k], 0));
+    $('aStat').innerHTML = STATUS.map(k => `<div class="stat"><b>${tot[k]}</b><i style="background:${WARNA[k]}"></i>${k}</div>`).join('');
+    donut(tot);
+    $('aTbl').innerHTML = '<tr><th>NIS</th><th>Nama</th><th>Kelas</th>' + STATUS.map(x => `<th>${x}</th>`).join('') + '</tr>' +
+      (r.rows.length ? r.rows.map(s => `<tr><td>${esc(s.nis)}</td><td>${esc(s.nama)}</td><td>${esc(s.kelas)}</td>${STATUS.map(x => `<td>${s[x]}</td>`).join('')}</tr>`).join('')
+        : '<tr><td class="empty" colspan="8">Tidak ada data</td></tr>');
+  }catch(e){ $('aTbl').innerHTML = `<tr><td class="empty">⚠️ ${esc(e.message)}</td></tr>`; }
+}
+function donut(tot){
+  const sum = STATUS.reduce((a,k) => a + tot[k], 0), R = 70, C = 2 * Math.PI * R;
+  let off = 0, seg = '';
+  if (sum) STATUS.forEach(k => {
+    const len = tot[k] / sum * C; if (!len) return;
+    seg += `<circle r="${R}" cx="100" cy="100" fill="none" stroke="${WARNA[k]}" stroke-width="28" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}" transform="rotate(-90 100 100)"/>`;
+    off += len;
+  });
+  $('aChart').innerHTML = `<svg viewBox="0 0 200 200" width="210"><circle r="${R}" cx="100" cy="100" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="28"/>${seg}
+    <text x="100" y="98" text-anchor="middle" fill="#fff" font-size="30" font-family="Playfair Display,serif">${sum}</text>
+    <text x="100" y="118" text-anchor="middle" fill="#e8cf8f" font-size="11">catatan presensi</text></svg>`;
+  $('aLeg').innerHTML = STATUS.map(k => `<span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${WARNA[k]};margin-right:5px"></i>${k} ${sum ? Math.round(tot[k]/sum*100) : 0}%</span>`).join('');
+}
+$('aP').onchange = $('aF').onchange = $('aT').onchange = muatAdmin;
+</script>
+</body>
+</html>
